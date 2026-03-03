@@ -1,0 +1,231 @@
+body {
+  background-color: #003366;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+#star-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+}
+
+#star-container.active {
+  opacity: 1;
+}
+
+.star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: transparent;
+  animation: star-fly linear infinite, star-blink 0.8s steps(1) infinite;
+}
+
+@keyframes star-fly {
+  from {
+    left: 100%;
+  }
+
+  to {
+    left: -10%;
+  }
+}
+
+@keyframes star-blink {
+  0% {
+    box-shadow: 0 0 white;
+  }
+
+  20% {
+    box-shadow:
+      0 0 white,
+      -4px 0 white, 4px 0 white,
+      0 -4px white, 0 4px white;
+  }
+
+  40% {
+    box-shadow:
+      -8px 0 white, 8px 0 white,
+      0 -8px white, 0 8px white;
+  }
+
+  60% {
+    box-shadow:
+      -4px -4px white, 4px -4px white,
+      -4px 4px white, 4px 4px white;
+  }
+
+  80% {
+    box-shadow: none;
+  }
+
+  100% {
+    box-shadow: none;
+  }
+}
+
+#meme-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#rainbow-trail {
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 60%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+#rainbow-trail.active {
+  opacity: 1;
+}
+
+.rainbow-slice {
+  width: 25px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom,
+      #ff0000 0%, #ff0000 16.6%,
+      #ff9900 16.6%, #ff9900 33.2%,
+      #ffff00 33.2%, #ffff00 49.8%,
+      #33ff00 49.8%, #33ff00 66.4%,
+      #0099ff 66.4%, #0099ff 83%,
+      #6633ff 83%, #6633ff 100%);
+  animation: undulate 0.4s infinite alternate ease-in-out;
+}
+
+@keyframes undulate {
+  from {
+    transform: translateY(15px);
+  }
+
+  to {
+    transform: translateY(-15px);
+  }
+}
+
+#sticker-bob-wrapper {
+  z-index: 10;
+  position: relative;
+  height: 50vh;
+  max-height: 400px;
+}
+
+#sticker-bob-wrapper.playing {
+  animation: bob 1.5s infinite alternate ease-in-out;
+  animation-delay: -0.75s;
+}
+
+@keyframes bob {
+  0% {
+    transform: translateY(25%);
+  }
+
+  100% {
+    transform: translateY(-25%);
+  }
+}
+
+#sticker {
+  height: 100%;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  z-index: 10;
+  position: relative;
+  transition: scale 0.2s ease-in-out;
+}
+
+#sticker:hover {
+  scale: 1.1;
+}
+
+#sticker.playing:hover {
+  scale: 1;
+}
+
+#sticker.playing {
+  animation: rock 0.55s infinite alternate ease-in-out;
+  animation-delay: -0.275s;
+}
+
+@keyframes rock {
+  0% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(5deg);
+  }
+}
+
+.extra-seesaw {
+  animation: extra-rock 0.6s ease-in-out both !important;
+}
+
+@keyframes extra-rock {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(15deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.spin {
+  animation: spin-anim 1.2s ease-in-out both !important;
+}
+
+@keyframes spin-anim {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-ccw {
+  animation: spin-ccw-anim 1.2s ease-in-out both !important;
+}
+
+@keyframes spin-ccw-anim {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
