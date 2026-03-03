@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('../fonts/PressStart2P-Regular.ttf') format('truetype');
+}
+
 html,
 body {
   width: 100%;
@@ -236,9 +241,34 @@ body {
   }
 }
 
+#counter-container {
+  position: absolute;
+  top: 1rem;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+  display: none;
+  text-align: center;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+#counter {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  #counter {
+    margin: 0.5rem 0;
+    display: block;
+  }
+}
+
 #credits-container {
   position: absolute;
-  bottom: 12px;
+  bottom: 1rem;
   color: rgba(222, 218, 214, 0.75);
 }
 

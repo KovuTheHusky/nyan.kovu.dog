@@ -3,8 +3,17 @@ const stickerBobWrapper = document.getElementById("sticker-bob-wrapper");
 const rainbowTrail = document.getElementById("rainbow-trail");
 const bgMusic = document.getElementById("bg-music");
 const starContainer = document.getElementById("star-container");
+const counterContainer = document.getElementById("counter-container");
+const counterEl = document.getElementById("counter");
 
 let isMemeActive = false;
+let nyanStartTime = 0;
+
+function updateCounter() {
+  const elapsed = (performance.now() - nyanStartTime) / 1000;
+  counterEl.innerText = elapsed.toFixed(1);
+  requestAnimationFrame(updateCounter);
+}
 
 const starCount = 40;
 for (let i = 0; i < starCount; i++) {
@@ -66,6 +75,11 @@ sticker.addEventListener("click", () => {
 
     stickerBobWrapper.classList.add("playing");
     sticker.classList.add("playing");
+
+    counterContainer.style.display = "block";
+
+    nyanStartTime = performance.now();
+    requestAnimationFrame(updateCounter);
 
     isMemeActive = true;
   } else {
