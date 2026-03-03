@@ -1,15 +1,21 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   background-color: #003366;
-  margin: 0;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 #star-container {
