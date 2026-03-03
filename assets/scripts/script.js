@@ -42,7 +42,7 @@ for (let i = 0; i < sliceCount; i++) {
   const slice = document.createElement("div");
   slice.className = "rainbow-slice";
 
-  slice.style.animationDelay = `-${i * 0.05}s`;
+  slice.style.animationDelay = `-${(sliceCount - i) * 0.05}s`;
 
   if (i < taperCount) {
     const heightPercentage = Math.max(5, (i / taperCount) * 100);
