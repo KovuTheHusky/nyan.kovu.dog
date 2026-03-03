@@ -235,3 +235,13 @@ body {
     transform: rotate(-360deg);
   }
 }
+
+#credits-container {
+  position: absolute;
+  bottom: 12px;
+  color: rgba(222, 218, 214, 0.75);
+}
+
+#credits-container a {
+  color: inherit;
+}
