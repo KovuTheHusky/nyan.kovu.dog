@@ -45,6 +45,8 @@ body {
   height: 4px;
   background-color: transparent;
   animation: star-fly linear infinite, star-blink 0.8s steps(1) infinite;
+  will-change: left, box-shadow, transform;
+  transform: translateZ(0);
 }
 
 @keyframes star-fly {
@@ -125,6 +127,7 @@ body {
       #0099ff 66.4%, #0099ff 83%,
       #6633ff 83%, #6633ff 100%);
   animation: undulate 0.4s infinite alternate ease-in-out;
+  will-change: transform;
 }
 
 @keyframes undulate {
@@ -142,6 +145,7 @@ body {
   position: relative;
   height: 50vh;
   max-height: 400px;
+  will-change: transform;
 }
 
 #sticker-bob-wrapper.playing {
@@ -166,6 +170,7 @@ body {
   z-index: 10;
   position: relative;
   transition: scale 0.2s ease-in-out;
+  will-change: transform;
 }
 
 #sticker:hover {
