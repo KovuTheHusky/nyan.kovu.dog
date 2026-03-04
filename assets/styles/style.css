@@ -182,8 +182,8 @@ body {
 }
 
 #sticker.playing {
-  animation: rock 0.55s infinite alternate ease-in-out;
-  animation-delay: -0.275s;
+  animation: rock 0.6s infinite alternate ease-in-out;
+  animation-delay: -0.3s;
 }
 
 @keyframes rock {
