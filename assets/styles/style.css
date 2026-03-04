@@ -461,3 +461,11 @@ body {
   pointer-events: none;
   opacity: 1 !important;
 }
+
+.menu-item:disabled {
+  box-shadow: none !important;
+  cursor: default !important;
+  /* margin-bottom: 0 !important; */
+  pointer-events: none;
+  opacity: 1 !important;
+}

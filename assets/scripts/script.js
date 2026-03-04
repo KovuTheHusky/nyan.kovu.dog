@@ -6,12 +6,39 @@ const starContainer = document.getElementById("star-container");
 const counterContainer = document.getElementById("counter-container");
 const counterEl = document.getElementById("counter");
 
+const highScoreEl = document.getElementById("high-score-display");
+const totalScoreEl = document.getElementById("total-score-display");
+
 let isMemeActive = false;
 let nyanStartTime = 0;
+let lastSaveTime = 0;
+
+let highScore = parseFloat(localStorage.getItem("nyanHighScore")) || 0;
+let baseTotalScore = parseFloat(localStorage.getItem("nyanTotalScore")) || 0;
+
+if (highScoreEl) highScoreEl.innerText = highScore.toFixed(1);
+if (totalScoreEl) totalScoreEl.innerText = baseTotalScore.toFixed(1);
 
 function updateCounter() {
-  const elapsed = (performance.now() - nyanStartTime) / 1000;
+  const now = performance.now();
+  const elapsed = (now - nyanStartTime) / 1000;
+
   counterEl.innerText = elapsed.toFixed(1);
+
+  if (elapsed > highScore) {
+    highScore = elapsed;
+    highScoreEl.innerText = highScore.toFixed(1);
+  }
+
+  const currentTotal = baseTotalScore + elapsed;
+  totalScoreEl.innerText = currentTotal.toFixed(1);
+
+  if (now - lastSaveTime > 1000) {
+    localStorage.setItem("nyanHighScore", highScore.toString());
+    localStorage.setItem("nyanTotalScore", currentTotal.toString());
+    lastSaveTime = now;
+  }
+
   requestAnimationFrame(updateCounter);
 }
 
