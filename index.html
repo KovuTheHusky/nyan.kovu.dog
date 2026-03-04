@@ -38,15 +38,40 @@
       seconds!
     </div>
 
-    <div id="credits-container">
-      <small
-        >Image by
-        <a href="https://bsky.app/profile/yuriclown.bsky.social">Spitzy</a>.
-        Audio by
-        <a href="https://www.youtube.com/watch?v=1Gw1nTsE7Gg">Surya Hearts</a
-        >.</small
+    <button id="menu-btn" class="game-btn" onclick="toggleMenu()">
+      &#9776;
+    </button>
+
+    <button id="version-btn" class="game-btn">26.1</button>
+
+    <div id="side-menu">
+      <button
+        id="menu-close-btn"
+        class="game-btn menu-item"
+        onclick="toggleMenu()"
       >
+        Close Menu
+      </button>
+      <button class="game-btn menu-item menu-label" disabled>Credits</button>
+      <button
+        class="game-btn menu-item"
+        onclick="
+          window.location = 'https://bsky.app/profile/yuriclown.bsky.social'
+        "
+      >
+        Image by Spitzy
+      </button>
+      <button
+        class="game-btn menu-item"
+        onclick="
+          window.location = 'https://www.youtube.com/watch?v=1Gw1nTsE7Gg'
+        "
+      >
+        Audio by Surya Hearts
+      </button>
     </div>
+
+    <div id="menu-overlay" onclick="toggleMenu()"></div>
 
     <script src="assets/scripts/script.js"></script>
   </body>
