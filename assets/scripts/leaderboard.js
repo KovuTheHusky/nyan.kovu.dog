@@ -79,7 +79,7 @@ function renderLeaderboard() {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
-    let rankStr = `#${index + 1}`;
+    let rankStr = `${index + 1}`;
     if (index === 0) rankStr = "🥇";
     if (index === 1) rankStr = "🥈";
     if (index === 2) rankStr = "🥉";
