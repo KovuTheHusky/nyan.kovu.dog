@@ -45,6 +45,10 @@ for (let i = 0; i < starCount; i++) {
 
 // 2. Render the Leaderboard
 function renderLeaderboard() {
+  // NEW: Save the user's exact scroll position before we wipe the table
+  const wrapper = document.getElementById("leaderboard-wrapper");
+  const previousScroll = wrapper.scrollTop;
+
   leaderboardContent.innerHTML = "";
 
   if (allUsers.length === 0) {
@@ -83,7 +87,6 @@ function renderLeaderboard() {
     const row = document.createElement("div");
     row.className = "lb-row";
 
-    // Build the HTML with the new columns
     row.innerHTML = `
       <div class="lb-rank">${rankStr}</div>
       <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
@@ -95,6 +98,8 @@ function renderLeaderboard() {
 
     leaderboardContent.appendChild(row);
   });
+
+  wrapper.scrollTop = previousScroll;
 }
 
 // 3. Fetch Data from API
@@ -142,5 +147,8 @@ sortSpinsBtn.addEventListener("click", () => {
   }
 });
 
-// Kick off the fetch
+// Kick off the initial fetch immediately
 fetchLeaderboard();
+
+// NEW: Silently fetch and redraw the leaderboard every 10 seconds
+setInterval(fetchLeaderboard, 10000);
