@@ -1,0 +1,112 @@
+const API_URL = "https://api.kovu.dog/nyan.php?dump";
+const leaderboardContent = document.getElementById("leaderboard-content");
+const starContainer = document.getElementById("star-container");
+
+const sortBestBtn = document.getElementById("sort-best");
+const sortTotalBtn = document.getElementById("sort-total");
+
+let allUsers = [];
+let currentSort = "total_time";
+
+const starCount = 40;
+for (let i = 0; i < starCount; i++) {
+  const star = document.createElement("div");
+  star.className = "star";
+
+  const layer = Math.floor(Math.random() * 3);
+  let scale, duration;
+  if (layer === 0) {
+    scale = 0.5;
+    duration = 5;
+  } else if (layer === 1) {
+    scale = 1;
+    duration = 3.5;
+  } else {
+    scale = 1.5;
+    duration = 2;
+  }
+
+  star.style.transform = `scale(${scale})`;
+  star.style.top = `${Math.random() * 100}vh`;
+  star.style.animationDuration = `${duration}s, 0.8s`;
+
+  const delay = -(Math.random() * 5);
+  star.style.animationDelay = `${delay}s, ${delay}s`;
+
+  starContainer.appendChild(star);
+}
+
+function renderLeaderboard() {
+  leaderboardContent.innerHTML = "";
+
+  if (allUsers.length === 0) {
+    leaderboardContent.innerHTML =
+      "<div style='text-align: center; padding: 40px;'>No scores yet!</div>";
+    return;
+  }
+
+  allUsers.sort((a, b) => b[currentSort] - a[currentSort]);
+
+  sortBestBtn.classList.remove("active-sort");
+  sortTotalBtn.classList.remove("active-sort");
+  if (currentSort === "best_time") {
+    sortBestBtn.classList.add("active-sort");
+  } else {
+    sortTotalBtn.classList.add("active-sort");
+  }
+
+  allUsers.forEach((user, index) => {
+    const safeUsername = user.username
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    let rankStr = `#${index + 1}`;
+    if (index === 0) rankStr = "🥇";
+    if (index === 1) rankStr = "🥈";
+    if (index === 2) rankStr = "🥉";
+
+    const row = document.createElement("div");
+    row.className = "lb-row";
+
+    row.innerHTML = `
+      <div class="lb-rank">${rankStr}</div>
+      <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
+      <div class="lb-best">${parseFloat(user.best_time).toFixed(1)}s</div>
+      <div class="lb-total">${parseFloat(user.total_time).toFixed(1)}s</div>
+    `;
+
+    leaderboardContent.appendChild(row);
+  });
+}
+
+async function fetchLeaderboard() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Network response was not ok");
+    const data = await response.json();
+
+    allUsers = data.users || [];
+    renderLeaderboard();
+  } catch (error) {
+    console.error("Failed to load leaderboard:", error);
+    leaderboardContent.innerHTML =
+      "<div style='text-align: center; padding: 40px; color: #ff5555;'>Error loading leaderboard.</div>";
+  }
+}
+
+sortBestBtn.addEventListener("click", () => {
+  if (currentSort !== "best_time") {
+    currentSort = "best_time";
+    renderLeaderboard();
+  }
+});
+
+sortTotalBtn.addEventListener("click", () => {
+  if (currentSort !== "total_time") {
+    currentSort = "total_time";
+    renderLeaderboard();
+  }
+});
+
+fetchLeaderboard();
