@@ -4,6 +4,7 @@ const rainbowTrail = document.getElementById("rainbow-trail");
 const bgMusic = document.getElementById("bg-music");
 const starContainer = document.getElementById("star-container");
 const counterContainer = document.getElementById("counter-container");
+const startContainer = document.getElementById("start-container");
 const counterEl = document.getElementById("counter");
 
 const usernameInput = document.getElementById("username-input");
@@ -191,6 +192,7 @@ sticker.addEventListener("click", () => {
     stickerBobWrapper.classList.add("playing");
     sticker.classList.add("playing");
 
+    startContainer.style.display = "none";
     counterContainer.style.display = "block";
 
     nyanStartTime = performance.now();
