@@ -6,18 +6,94 @@ const starContainer = document.getElementById("star-container");
 const counterContainer = document.getElementById("counter-container");
 const counterEl = document.getElementById("counter");
 
-const highScoreEl = document.getElementById("high-score-display");
-const totalScoreEl = document.getElementById("total-score-display");
+const usernameInput = document.getElementById("username-input");
+const userHighScoreEl = document.getElementById("user-high-score-display");
+const userTotalScoreEl = document.getElementById("user-total-score-display");
+const globalHighScoreEl = document.getElementById("global-high-score-display");
+const globalTotalScoreEl = document.getElementById(
+  "global-total-score-display",
+);
+
+const API_URL = "https://api.kovu.dog/nyan.php";
 
 let isMemeActive = false;
 let nyanStartTime = 0;
 let lastSaveTime = 0;
+let lastApiSyncTime = 0;
+
+let username = localStorage.getItem("nyanUsername") || "";
+if (usernameInput) usernameInput.value = username;
 
 let highScore = parseFloat(localStorage.getItem("nyanHighScore")) || 0;
 let baseTotalScore = parseFloat(localStorage.getItem("nyanTotalScore")) || 0;
+let lastSyncedTotalScore = baseTotalScore;
 
-if (highScoreEl) highScoreEl.innerText = highScore.toFixed(1);
-if (totalScoreEl) totalScoreEl.innerText = baseTotalScore.toFixed(1);
+if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+if (userTotalScoreEl) userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
+
+fetchGlobalStats();
+
+if (usernameInput) {
+  usernameInput.addEventListener("input", (e) => {
+    username = e.target.value.trim();
+    localStorage.setItem("nyanUsername", username);
+    fetchGlobalStats();
+  });
+}
+
+async function fetchGlobalStats() {
+  try {
+    const url = username
+      ? `${API_URL}?username=${encodeURIComponent(username)}`
+      : API_URL;
+    const response = await fetch(url);
+    if (!response.ok) return;
+    const data = await response.json();
+
+    if (globalHighScoreEl && data.global_best !== undefined) {
+      globalHighScoreEl.innerText = data.global_best.toFixed(1);
+    }
+    if (globalTotalScoreEl && data.global_total !== undefined) {
+      globalTotalScoreEl.innerText = data.global_total.toFixed(1);
+    }
+
+    if (username !== "") {
+      highScore = Math.max(highScore, data.user_best || 0);
+      baseTotalScore = Math.max(baseTotalScore, data.user_total || 0);
+
+      // Keep sync tracking accurate so we don't duplicate existing time on next post
+      lastSyncedTotalScore = baseTotalScore;
+
+      // Only update the DOM from a fetch if the meme isn't currently active and ticking
+      if (userHighScoreEl && !isMemeActive)
+        userHighScoreEl.innerText = highScore.toFixed(1);
+      if (userTotalScoreEl && !isMemeActive)
+        userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
+    }
+  } catch (error) {
+    console.error("Failed to fetch stats:", error);
+  }
+}
+
+async function updateGlobalStats(currentHighScore, currentTotal) {
+  const addedTime = currentTotal - lastSyncedTotalScore;
+  if (addedTime <= 0) return;
+
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: username,
+        best: currentHighScore,
+        addedTime: addedTime,
+      }),
+    });
+    lastSyncedTotalScore = currentTotal;
+  } catch (error) {
+    console.error("Failed to update stats:", error);
+  }
+}
 
 function updateCounter() {
   const now = performance.now();
@@ -27,16 +103,23 @@ function updateCounter() {
 
   if (elapsed > highScore) {
     highScore = elapsed;
-    highScoreEl.innerText = highScore.toFixed(1);
+    if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
   }
 
   const currentTotal = baseTotalScore + elapsed;
-  totalScoreEl.innerText = currentTotal.toFixed(1);
+  if (userTotalScoreEl) userTotalScoreEl.innerText = currentTotal.toFixed(1);
 
+  // 1. Local Storage Sync (Every 1 second)
   if (now - lastSaveTime > 1000) {
     localStorage.setItem("nyanHighScore", highScore.toString());
     localStorage.setItem("nyanTotalScore", currentTotal.toString());
     lastSaveTime = now;
+
+    // 2. Global Server Sync (Every 10 seconds)
+    if (now - lastApiSyncTime > 10000) {
+      updateGlobalStats(highScore, currentTotal);
+      lastApiSyncTime = now;
+    }
   }
 
   requestAnimationFrame(updateCounter);
@@ -106,6 +189,8 @@ sticker.addEventListener("click", () => {
     counterContainer.style.display = "block";
 
     nyanStartTime = performance.now();
+    lastSaveTime = performance.now();
+    lastApiSyncTime = performance.now();
     requestAnimationFrame(updateCounter);
 
     isMemeActive = true;
@@ -138,10 +223,20 @@ function toggleMenu() {
   const menu = document.getElementById("side-menu");
   const overlay = document.getElementById("menu-overlay");
   const isOpen = menu.classList.contains("open");
+
   if (isOpen) {
     menu.classList.remove("open");
     overlay.classList.remove("visible");
   } else {
+    // Sync to the API right before the menu opens so the stats are fresh
+    if (isMemeActive) {
+      const currentTotal =
+        baseTotalScore + (performance.now() - nyanStartTime) / 1000;
+      updateGlobalStats(highScore, currentTotal);
+      lastApiSyncTime = performance.now();
+    }
+    fetchGlobalStats();
+
     menu.classList.add("open");
     overlay.classList.add("visible");
   }

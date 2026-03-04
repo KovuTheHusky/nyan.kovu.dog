@@ -469,3 +469,13 @@ body {
   pointer-events: none;
   opacity: 1 !important;
 }
+
+#username-input {
+  cursor: text;
+  background-color: #fff;
+  color: #000;
+}
+
+#username-input::placeholder {
+  opacity: 0.75;
+}
