@@ -19,6 +19,7 @@ const API_URL = "https://api.kovu.dog/nyan.php";
 let isMemeActive = false;
 let nyanStartTime = 0;
 let lastSaveTime = 0;
+let lastApiSyncElapsed = 0;
 let lastApiSyncTime = 0;
 
 let menuSyncInterval = null;
@@ -61,24 +62,24 @@ async function fetchGlobalStats() {
 
     if (username !== "") {
       highScore = Math.max(highScore, data.user_best || 0);
-      baseTotalScore = Math.max(baseTotalScore, data.user_total || 0);
 
-      // Keep sync tracking accurate so we don't duplicate existing time on next post
-      lastSyncedTotalScore = baseTotalScore;
+      if (!isMemeActive) {
+        baseTotalScore = Math.max(baseTotalScore, data.user_total || 0);
+        lastSyncedTotalScore = baseTotalScore;
 
-      // Only update the DOM from a fetch if the meme isn't currently active and ticking
-      if (userHighScoreEl && !isMemeActive)
-        userHighScoreEl.innerText = highScore.toFixed(1);
-      if (userTotalScoreEl && !isMemeActive)
-        userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
+        if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+        if (userTotalScoreEl)
+          userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
+      } else {
+        if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+      }
     }
   } catch (error) {
     console.error("Failed to fetch stats:", error);
   }
 }
 
-async function updateGlobalStats(currentHighScore, currentTotal) {
-  const addedTime = currentTotal - lastSyncedTotalScore;
+async function updateGlobalStats(currentHighScore, addedTime) {
   if (addedTime <= 0) return;
 
   try {
@@ -91,7 +92,6 @@ async function updateGlobalStats(currentHighScore, currentTotal) {
         addedTime: addedTime,
       }),
     });
-    lastSyncedTotalScore = currentTotal;
   } catch (error) {
     console.error("Failed to update stats:", error);
   }
@@ -119,7 +119,10 @@ function updateCounter() {
 
     // 2. Global Server Sync (Every 10 seconds)
     if (now - lastApiSyncTime > 10000) {
-      updateGlobalStats(highScore, currentTotal);
+      const addedSinceLastSync = elapsed - lastApiSyncElapsed;
+      updateGlobalStats(highScore, addedSinceLastSync);
+
+      lastApiSyncElapsed = elapsed;
       lastApiSyncTime = now;
     }
   }
@@ -192,6 +195,7 @@ sticker.addEventListener("click", () => {
 
     nyanStartTime = performance.now();
     lastSaveTime = performance.now();
+    lastApiSyncElapsed = 0;
     lastApiSyncTime = performance.now();
     requestAnimationFrame(updateCounter);
 
@@ -236,9 +240,12 @@ function toggleMenu() {
     }
   } else {
     if (isMemeActive) {
-      const currentTotal =
-        baseTotalScore + (performance.now() - nyanStartTime) / 1000;
-      updateGlobalStats(highScore, currentTotal);
+      const elapsed = (performance.now() - nyanStartTime) / 1000;
+      const addedSinceLastSync = Math.max(0, elapsed - lastApiSyncElapsed);
+
+      updateGlobalStats(highScore, addedSinceLastSync);
+
+      lastApiSyncElapsed = elapsed;
       lastApiSyncTime = performance.now();
     }
     fetchGlobalStats();
