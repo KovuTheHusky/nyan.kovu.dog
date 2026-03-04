@@ -21,6 +21,8 @@ let nyanStartTime = 0;
 let lastSaveTime = 0;
 let lastApiSyncTime = 0;
 
+let menuSyncInterval = null;
+
 let username = localStorage.getItem("nyanUsername") || "";
 if (usernameInput) usernameInput.value = username;
 
@@ -227,8 +229,12 @@ function toggleMenu() {
   if (isOpen) {
     menu.classList.remove("open");
     overlay.classList.remove("visible");
+
+    if (menuSyncInterval) {
+      clearInterval(menuSyncInterval);
+      menuSyncInterval = null;
+    }
   } else {
-    // Sync to the API right before the menu opens so the stats are fresh
     if (isMemeActive) {
       const currentTotal =
         baseTotalScore + (performance.now() - nyanStartTime) / 1000;
@@ -239,5 +245,7 @@ function toggleMenu() {
 
     menu.classList.add("open");
     overlay.classList.add("visible");
+
+    menuSyncInterval = setInterval(fetchGlobalStats, 5000);
   }
 }
