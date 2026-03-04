@@ -4,15 +4,17 @@ const starContainer = document.getElementById("star-container");
 
 const sortBestBtn = document.getElementById("sort-best");
 const sortTotalBtn = document.getElementById("sort-total");
+const sortWigglesBtn = document.getElementById("sort-wiggles");
+const sortSpinsBtn = document.getElementById("sort-spins");
 
 let allUsers = [];
-let currentSort = "total_time";
+let currentSort = "total_time"; // Defaults to total time
 
+// 1. Generate the Starfield
 const starCount = 40;
 for (let i = 0; i < starCount; i++) {
   const star = document.createElement("div");
   star.className = "star";
-
   const layer = Math.floor(Math.random() * 3);
   let scale, duration;
   if (layer === 0) {
@@ -29,13 +31,12 @@ for (let i = 0; i < starCount; i++) {
   star.style.transform = `scale(${scale})`;
   star.style.top = `${Math.random() * 100}vh`;
   star.style.animationDuration = `${duration}s, 0.8s`;
-
   const delay = -(Math.random() * 5);
   star.style.animationDelay = `${delay}s, ${delay}s`;
-
   starContainer.appendChild(star);
 }
 
+// 2. Render the Leaderboard
 function renderLeaderboard() {
   leaderboardContent.innerHTML = "";
 
@@ -45,16 +46,22 @@ function renderLeaderboard() {
     return;
   }
 
+  // Sort the array based on the active criteria
   allUsers.sort((a, b) => b[currentSort] - a[currentSort]);
 
+  // Update UI headers
   sortBestBtn.classList.remove("active-sort");
   sortTotalBtn.classList.remove("active-sort");
-  if (currentSort === "best_time") {
-    sortBestBtn.classList.add("active-sort");
-  } else {
-    sortTotalBtn.classList.add("active-sort");
-  }
+  sortWigglesBtn.classList.remove("active-sort");
+  sortSpinsBtn.classList.remove("active-sort");
 
+  if (currentSort === "best_time") sortBestBtn.classList.add("active-sort");
+  else if (currentSort === "wiggles")
+    sortWigglesBtn.classList.add("active-sort");
+  else if (currentSort === "spins") sortSpinsBtn.classList.add("active-sort");
+  else sortTotalBtn.classList.add("active-sort");
+
+  // Build the rows
   allUsers.forEach((user, index) => {
     const safeUsername = user.username
       .replace(/&/g, "&amp;")
@@ -69,17 +76,21 @@ function renderLeaderboard() {
     const row = document.createElement("div");
     row.className = "lb-row";
 
+    // Build the HTML with the new columns
     row.innerHTML = `
       <div class="lb-rank">${rankStr}</div>
       <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
-      <div class="lb-best">${parseFloat(user.best_time).toFixed(1)}s</div>
-      <div class="lb-total">${parseFloat(user.total_time).toFixed(1)}s</div>
+      <div class="lb-best">${parseFloat(user.best_time).toFixed(1)}</div>
+      <div class="lb-total">${parseFloat(user.total_time).toFixed(1)}</div>
+      <div class="lb-wiggles">${parseInt(user.wiggles || 0)}</div>
+      <div class="lb-spins">${parseInt(user.spins || 0)}</div>
     `;
 
     leaderboardContent.appendChild(row);
   });
 }
 
+// 3. Fetch Data from API
 async function fetchLeaderboard() {
   try {
     const response = await fetch(API_URL);
@@ -95,6 +106,7 @@ async function fetchLeaderboard() {
   }
 }
 
+// 4. Event Listeners for Sorting
 sortBestBtn.addEventListener("click", () => {
   if (currentSort !== "best_time") {
     currentSort = "best_time";
@@ -109,4 +121,19 @@ sortTotalBtn.addEventListener("click", () => {
   }
 });
 
+sortWigglesBtn.addEventListener("click", () => {
+  if (currentSort !== "wiggles") {
+    currentSort = "wiggles";
+    renderLeaderboard();
+  }
+});
+
+sortSpinsBtn.addEventListener("click", () => {
+  if (currentSort !== "spins") {
+    currentSort = "spins";
+    renderLeaderboard();
+  }
+});
+
+// Kick off the fetch
 fetchLeaderboard();

@@ -20,18 +20,29 @@
         z-index: 10;
         background-color: #1a1a1a;
         border: 4px solid #fff;
-        padding: 20px;
+        padding: 1rem;
         color: #fff;
         font-family: "Press Start 2P", monospace;
-        max-width: 800px;
-        width: 90%;
+        max-width: 900px; /* Widened slightly to fit the new columns */
+        width: 95%;
         max-height: 80vh;
         overflow-y: auto;
         text-transform: uppercase;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-
         -webkit-font-smoothing: none;
         -moz-osx-font-smoothing: grayscale;
+      }
+
+      #leaderboard-wrapper::-webkit-scrollbar {
+        width: 16px;
+      }
+      #leaderboard-wrapper::-webkit-scrollbar-track {
+        background: #000;
+        border-left: 4px solid #333;
+      }
+      #leaderboard-wrapper::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border: 4px solid #000;
       }
 
       .lb-header,
@@ -40,7 +51,7 @@
         justify-content: space-between;
         padding: 12px 0;
         border-bottom: 4px solid #333;
-        font-size: 10px;
+        font-size: 8px; /* Slightly smaller on mobile to fit everything */
         line-height: 1.5;
       }
 
@@ -52,34 +63,32 @@
       }
 
       .lb-rank {
-        width: 15%;
+        width: 10%;
         text-align: center;
       }
       .lb-name {
-        width: 40%;
+        width: 25%;
         text-align: left;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
       .lb-best {
-        width: 20%;
+        width: 15%;
         text-align: right;
       }
       .lb-total {
-        width: 25%;
+        width: 15%;
+        text-align: right;
+      }
+      .lb-wiggles {
+        width: 17%;
+        text-align: right;
+      }
+      .lb-spins {
+        width: 18%;
         text-align: right;
         padding-right: 10px;
-      }
-
-      .back-btn {
-        position: relative;
-        width: 90%;
-        margin-bottom: 1rem;
-        background-color: #f44336;
-      }
-      .back-btn:active {
-        background-color: #c62828;
       }
 
       .sortable {
@@ -102,10 +111,20 @@
         margin-left: 4px;
       }
 
+      .back-btn {
+        position: relative;
+        width: 90%;
+        margin-bottom: 1rem;
+        background-color: #f44336;
+      }
+      .back-btn:active {
+        background-color: #c62828;
+      }
+
       @media (min-width: 600px) {
         .lb-header,
         .lb-row {
-          font-size: 14px;
+          font-size: 12px;
         }
       }
     </style>
@@ -139,6 +158,8 @@
         <div class="lb-name">Name</div>
         <div class="lb-best sortable" id="sort-best">Best</div>
         <div class="lb-total sortable active-sort" id="sort-total">Total</div>
+        <div class="lb-wiggles sortable" id="sort-wiggles">Wiggles</div>
+        <div class="lb-spins sortable" id="sort-spins">Spins</div>
       </div>
 
       <div id="leaderboard-content">

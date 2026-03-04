@@ -14,6 +14,18 @@ const globalHighScoreEl = document.getElementById("global-high-score-display");
 const globalTotalScoreEl = document.getElementById(
   "global-total-score-display",
 );
+const userWigglesEl = document.getElementById("user-wiggles-display");
+const userSpinsEl = document.getElementById("user-spins-display");
+const globalWigglesEl = document.getElementById("global-wiggles-display");
+const globalSpinsEl = document.getElementById("global-spins-display");
+
+let wiggles = parseInt(localStorage.getItem("nyanWiggles")) || 0;
+let spins = parseInt(localStorage.getItem("nyanSpins")) || 0;
+let lastSyncedWiggles = wiggles;
+let lastSyncedSpins = spins;
+
+if (userWigglesEl) userWigglesEl.innerText = wiggles;
+if (userSpinsEl) userSpinsEl.innerText = spins;
 
 const API_URL = "https://api.kovu.dog/nyan.php";
 
@@ -61,19 +73,29 @@ async function fetchGlobalStats() {
       globalTotalScoreEl.innerText = data.global_total.toFixed(1);
     }
 
+    if (globalWigglesEl && data.global_wiggles !== undefined)
+      globalWigglesEl.innerText = data.global_wiggles;
+    if (globalSpinsEl && data.global_spins !== undefined)
+      globalSpinsEl.innerText = data.global_spins;
+
     if (username !== "") {
       highScore = Math.max(highScore, data.user_best || 0);
 
       if (!isMemeActive) {
         baseTotalScore = Math.max(baseTotalScore, data.user_total || 0);
-        lastSyncedTotalScore = baseTotalScore;
+        wiggles = Math.max(wiggles, data.user_wiggles || 0);
+        spins = Math.max(spins, data.user_spins || 0);
 
-        if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+        lastSyncedTotalScore = baseTotalScore;
+        lastSyncedWiggles = wiggles;
+        lastSyncedSpins = spins;
+
         if (userTotalScoreEl)
           userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
-      } else {
-        if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+        if (userWigglesEl) userWigglesEl.innerText = wiggles;
+        if (userSpinsEl) userSpinsEl.innerText = spins;
       }
+      if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
     }
   } catch (error) {
     console.error("Failed to fetch stats:", error);
@@ -81,7 +103,10 @@ async function fetchGlobalStats() {
 }
 
 async function updateGlobalStats(currentHighScore, addedTime) {
-  if (addedTime <= 0) return;
+  const addedWiggles = wiggles - lastSyncedWiggles;
+  const addedSpins = spins - lastSyncedSpins;
+
+  if (addedTime <= 0 && addedWiggles <= 0 && addedSpins <= 0) return;
 
   try {
     await fetch(API_URL, {
@@ -91,8 +116,14 @@ async function updateGlobalStats(currentHighScore, addedTime) {
         username: username,
         best: currentHighScore,
         addedTime: addedTime,
+        addedWiggles: addedWiggles,
+        addedSpins: addedSpins,
       }),
     });
+
+    // Lock in the synced interaction state
+    lastSyncedWiggles += addedWiggles;
+    lastSyncedSpins += addedSpins;
   } catch (error) {
     console.error("Failed to update stats:", error);
   }
@@ -216,6 +247,18 @@ sticker.addEventListener("click", () => {
 
     if (isRareSpin) {
       animationClass = Math.random() < 0.5 ? "spin" : "spin-ccw";
+
+      // Increase spins and save
+      spins++;
+      if (userSpinsEl) userSpinsEl.innerText = spins;
+      localStorage.setItem("nyanSpins", spins.toString());
+    } else {
+      animationClass = "extra-seesaw";
+
+      // Increase wiggles and save
+      wiggles++;
+      if (userWigglesEl) userWigglesEl.innerText = wiggles;
+      localStorage.setItem("nyanWiggles", wiggles.toString());
     }
 
     sticker.classList.add(animationClass);
