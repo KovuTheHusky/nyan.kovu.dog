@@ -26,6 +26,32 @@ const userSpinsEl = document.getElementById("user-spins-display");
 const globalWigglesEl = document.getElementById("global-wiggles-display");
 const globalSpinsEl = document.getElementById("global-spins-display");
 
+const volumeWrapper = document.getElementById("volume-wrapper");
+const volumeSlider = document.getElementById("volume-slider");
+
+// Load saved volume or default to 50%
+let currentVolume = parseFloat(localStorage.getItem("nyanVolume"));
+if (isNaN(currentVolume)) currentVolume = 0.5;
+
+if (volumeSlider && volumeWrapper) {
+  volumeSlider.value = currentVolume;
+  // Paint the initial background fill
+  volumeWrapper.style.setProperty("--vol-fill", `${currentVolume * 100}%`);
+
+  volumeSlider.addEventListener("input", (e) => {
+    currentVolume = parseFloat(e.target.value);
+
+    // Update the audio
+    if (bgMusic) bgMusic.volume = currentVolume;
+
+    // Update the visual gauge fill
+    volumeWrapper.style.setProperty("--vol-fill", `${currentVolume * 100}%`);
+
+    // Save preference
+    localStorage.setItem("nyanVolume", currentVolume.toString());
+  });
+}
+
 let wiggles = parseInt(localStorage.getItem("nyanWiggles")) || 0;
 let spins = parseInt(localStorage.getItem("nyanSpins")) || 0;
 let lastSyncedWiggles = wiggles;
@@ -219,7 +245,7 @@ for (let i = 0; i < sliceCount; i++) {
 
 sticker.addEventListener("click", () => {
   if (!isMemeActive) {
-    bgMusic.volume = 0.5;
+    bgMusic.volume = currentVolume;
     bgMusic.play().catch((error) => {
       console.log("Audio playback was blocked:", error);
     });

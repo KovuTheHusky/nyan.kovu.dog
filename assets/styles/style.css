@@ -436,3 +436,37 @@ a.game-btn {
 #username-input::placeholder {
   opacity: 0.75;
 }
+
+/* Interactive Volume Gauge */
+.volume-wrapper {
+  position: relative;
+  overflow: hidden;
+  /* Keeps the gradient strictly inside your rounded borders */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* The dynamic fill background! */
+  background: linear-gradient(90deg, #2196f3 var(--vol-fill, 50%), #333 var(--vol-fill, 50%));
+}
+
+.volume-wrapper .volume-label {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  /* Forces mouse clicks to ignore the text and grab the slider underneath */
+  color: #fff;
+}
+
+#volume-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  /* Makes the ugly native slider completely invisible */
+  cursor: pointer;
+  z-index: 1;
+}
