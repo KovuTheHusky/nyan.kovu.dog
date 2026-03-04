@@ -111,13 +111,13 @@
         margin-left: 4px;
       }
 
-      .back-btn {
-        position: relative;
-        width: 90%;
-        margin-bottom: 1rem;
-        background-color: #f44336;
+      /* NEW: Top-left navigation button */
+      #back-nav-btn {
+        top: 30px;
+        left: 30px;
+        background-color: #f44336; /* Keeps the red cancel/back color */
       }
-      .back-btn:active {
+      #back-nav-btn:active {
         background-color: #c62828;
       }
 
@@ -130,13 +130,11 @@
     </style>
   </head>
   <body oncontextmenu="return false;">
+    <a href="/" id="back-nav-btn" class="game-btn"> &larr; </a>
+
     <div id="star-container" class="active"></div>
 
     <div id="leaderboard-wrapper">
-      <div style="display: flex; justify-content: center">
-        <a class="game-btn back-btn" href="/"> &larr; Back to Nyan </a>
-      </div>
-
       <h2
         style="
           text-align: center;
@@ -151,8 +149,8 @@
       <div class="lb-header">
         <div class="lb-rank">#</div>
         <div class="lb-name">Name</div>
-        <div class="lb-best sortable" id="sort-best">Best</div>
         <div class="lb-total sortable active-sort" id="sort-total">Total</div>
+        <div class="lb-best sortable" id="sort-best">Best</div>
         <div class="lb-wiggles sortable" id="sort-wiggles">Wiggles</div>
         <div class="lb-spins sortable" id="sort-spins">Spins</div>
       </div>

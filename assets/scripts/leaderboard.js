@@ -90,8 +90,8 @@ function renderLeaderboard() {
     row.innerHTML = `
       <div class="lb-rank">${rankStr}</div>
       <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
-      <div class="lb-best">${formatTime(user.best_time)}</div>
       <div class="lb-total">${formatTime(user.total_time)}</div>
+      <div class="lb-best">${formatTime(user.best_time)}</div>
       <div class="lb-wiggles">${formatCount(user.wiggles || 0)}</div>
       <div class="lb-spins">${formatCount(user.spins || 0)}</div>
     `;
