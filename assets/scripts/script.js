@@ -1,3 +1,10 @@
+const formatTime = (num) =>
+  parseFloat(num).toLocaleString("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+const formatCount = (num) => parseInt(num).toLocaleString("en-US");
+
 const sticker = document.getElementById("sticker");
 const stickerBobWrapper = document.getElementById("sticker-bob-wrapper");
 const rainbowTrail = document.getElementById("rainbow-trail");
@@ -44,8 +51,8 @@ let highScore = parseFloat(localStorage.getItem("nyanHighScore")) || 0;
 let baseTotalScore = parseFloat(localStorage.getItem("nyanTotalScore")) || 0;
 let lastSyncedTotalScore = baseTotalScore;
 
-if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
-if (userTotalScoreEl) userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
+if (userHighScoreEl) userHighScoreEl.innerText = formatTime(highScore);
+if (userTotalScoreEl) userTotalScoreEl.innerText = formatTime(baseTotalScore);
 
 fetchGlobalStats();
 
@@ -67,16 +74,16 @@ async function fetchGlobalStats() {
     const data = await response.json();
 
     if (globalHighScoreEl && data.global_best !== undefined) {
-      globalHighScoreEl.innerText = data.global_best.toFixed(1);
+      globalHighScoreEl.innerText = formatTime(data.global_best);
     }
     if (globalTotalScoreEl && data.global_total !== undefined) {
-      globalTotalScoreEl.innerText = data.global_total.toFixed(1);
+      globalTotalScoreEl.innerText = formatTime(data.global_total);
     }
 
     if (globalWigglesEl && data.global_wiggles !== undefined)
-      globalWigglesEl.innerText = data.global_wiggles;
+      globalWigglesEl.innerText = formatCount(data.global_wiggles);
     if (globalSpinsEl && data.global_spins !== undefined)
-      globalSpinsEl.innerText = data.global_spins;
+      globalSpinsEl.innerText = formatCount(data.global_spins);
 
     if (username !== "") {
       highScore = Math.max(highScore, data.user_best || 0);
@@ -91,11 +98,11 @@ async function fetchGlobalStats() {
         lastSyncedSpins = spins;
 
         if (userTotalScoreEl)
-          userTotalScoreEl.innerText = baseTotalScore.toFixed(1);
-        if (userWigglesEl) userWigglesEl.innerText = wiggles;
-        if (userSpinsEl) userSpinsEl.innerText = spins;
+          userTotalScoreEl.innerText = formatTime(baseTotalScore);
+        if (userWigglesEl) userWigglesEl.innerText = formatCount(wiggles);
+        if (userSpinsEl) userSpinsEl.innerText = formatCount(spins);
       }
-      if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+      if (userHighScoreEl) userHighScoreEl.innerText = formatTime(highScore);
     }
   } catch (error) {
     console.error("Failed to fetch stats:", error);
@@ -133,15 +140,15 @@ function updateCounter() {
   const now = performance.now();
   const elapsed = (now - nyanStartTime) / 1000;
 
-  counterEl.innerText = elapsed.toFixed(1);
+  counterEl.innerText = formatTime(elapsed);
 
   if (elapsed > highScore) {
     highScore = elapsed;
-    if (userHighScoreEl) userHighScoreEl.innerText = highScore.toFixed(1);
+    if (userHighScoreEl) userHighScoreEl.innerText = formatTime(highScore);
   }
 
   const currentTotal = baseTotalScore + elapsed;
-  if (userTotalScoreEl) userTotalScoreEl.innerText = currentTotal.toFixed(1);
+  if (userTotalScoreEl) userTotalScoreEl.innerText = formatTime(currentTotal);
 
   // 1. Local Storage Sync (Every 1 second)
   if (now - lastSaveTime > 1000) {

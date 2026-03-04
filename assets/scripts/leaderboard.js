@@ -1,3 +1,10 @@
+const formatTime = (num) =>
+  parseFloat(num).toLocaleString("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+const formatCount = (num) => parseInt(num).toLocaleString("en-US");
+
 const API_URL = "https://api.kovu.dog/nyan.php?dump";
 const leaderboardContent = document.getElementById("leaderboard-content");
 const starContainer = document.getElementById("star-container");
@@ -80,10 +87,10 @@ function renderLeaderboard() {
     row.innerHTML = `
       <div class="lb-rank">${rankStr}</div>
       <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
-      <div class="lb-best">${parseFloat(user.best_time).toFixed(1)}</div>
-      <div class="lb-total">${parseFloat(user.total_time).toFixed(1)}</div>
-      <div class="lb-wiggles">${parseInt(user.wiggles || 0)}</div>
-      <div class="lb-spins">${parseInt(user.spins || 0)}</div>
+      <div class="lb-best">${formatTime(user.best_time)}</div>
+      <div class="lb-total">${formatTime(user.total_time)}</div>
+      <div class="lb-wiggles">${formatCount(user.wiggles || 0)}</div>
+      <div class="lb-spins">${formatCount(user.spins || 0)}</div>
     `;
 
     leaderboardContent.appendChild(row);
