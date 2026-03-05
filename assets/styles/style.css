@@ -132,11 +132,11 @@ body {
 
 @keyframes undulate {
   from {
-    transform: translateY(15px);
+    transform: translateY(15px) scaleX(1.1);
   }
 
   to {
-    transform: translateY(-15px);
+    transform: translateY(-15px) scaleX(1.1);
   }
 }
 
