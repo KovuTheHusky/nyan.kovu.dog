@@ -16,6 +16,7 @@ const sortSpinsBtn = document.getElementById("sort-spins");
 
 let allUsers = [];
 let currentSort = "total_time"; // Defaults to total time
+let lastServerTime = 0;
 
 // 1. Generate the Starfield
 const starCount = 40;
@@ -84,12 +85,19 @@ function renderLeaderboard() {
     if (index === 1) rankStr = "🥈";
     if (index === 2) rankStr = "🥉";
 
+    // NEW: Calculate online status (within the last 60 seconds)
+    const isOnline = lastServerTime - (user.last_seen || 0) <= 60;
+    const onlineHtml = isOnline
+      ? '<span class="online-dot" title="Online Now"></span>'
+      : "";
+
     const row = document.createElement("div");
     row.className = "lb-row";
 
+    // Add the onlineHtml variable right after the safeUsername
     row.innerHTML = `
       <div class="lb-rank">${rankStr}</div>
-      <div class="lb-name" title="${safeUsername}">${safeUsername}</div>
+      <div class="lb-name" title="${safeUsername}">${safeUsername}${onlineHtml}</div>
       <div class="lb-total">${formatTime(user.total_time)}</div>
       <div class="lb-best">${formatTime(user.best_time)}</div>
       <div class="lb-wiggles">${formatCount(user.wiggles || 0)}</div>
@@ -110,11 +118,12 @@ async function fetchLeaderboard() {
     const data = await response.json();
 
     allUsers = data.users || [];
+    lastServerTime = data.server_time || 0; // Capture the server's clock
+
     renderLeaderboard();
   } catch (error) {
     console.error("Failed to load leaderboard:", error);
-    leaderboardContent.innerHTML =
-      "<div style='text-align: center; padding: 40px; color: #ff5555;'>Error loading leaderboard.</div>";
+    // ... existing error HTML ...
   }
 }
 

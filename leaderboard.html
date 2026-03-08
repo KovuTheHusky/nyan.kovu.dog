@@ -125,6 +125,31 @@
         background-color: #c62828;
       }
 
+      .online-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #4caf50;
+        border-radius: 50%;
+        margin-left: 4px;
+        vertical-align: middle;
+        box-shadow: 0 0 6px #4caf50;
+        animation: pulse-dot 1s infinite;
+
+        position: relative;
+        top: -2px;
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
       @media (min-width: 600px) {
         .lb-header,
         .lb-row {
