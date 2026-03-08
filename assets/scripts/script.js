@@ -182,8 +182,8 @@ function updateCounter() {
     localStorage.setItem("nyanTotalScore", currentTotal.toString());
     lastSaveTime = now;
 
-    // 2. Global Server Sync (Every 10 seconds)
-    if (now - lastApiSyncTime > 10000) {
+    // 2. Global Server Sync (Every 5 seconds)
+    if (now - lastApiSyncTime > 5000) {
       const addedSinceLastSync = elapsed - lastApiSyncElapsed;
       updateGlobalStats(highScore, addedSinceLastSync);
 

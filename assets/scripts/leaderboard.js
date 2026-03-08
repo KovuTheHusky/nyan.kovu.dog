@@ -150,5 +150,5 @@ sortSpinsBtn.addEventListener("click", () => {
 // Kick off the initial fetch immediately
 fetchLeaderboard();
 
-// NEW: Silently fetch and redraw the leaderboard every 10 seconds
-setInterval(fetchLeaderboard, 10000);
+// NEW: Silently fetch and redraw the leaderboard every 5 seconds
+setInterval(fetchLeaderboard, 5000);
